@@ -1390,9 +1390,7 @@
           <span class="reveal-icon">${emoji}</span>
           <span class="reveal-label">${t.tapReveal}</span>
         </div>
-        <img alt="${label}" decoding="async" style="display:none"
-          onload="this.closest('.asset-card').classList.remove('asset-loading');this.classList.add('asset-loaded');this.style.display='';"
-          onerror="const fig=this.closest('figure'); if(fig) fig.remove();" />
+        <img alt="${label}" decoding="async" style="display:none" />
         <figcaption>${label}</figcaption>
       </figure>
     `;
@@ -1424,6 +1422,7 @@
       el.style.animationDelay = `${Math.random() * 80}ms`;
       document.body.appendChild(el);
       el.addEventListener("animationend", () => el.remove());
+      setTimeout(() => { if (el.parentNode) el.remove(); }, 1500);
     }
   }
 
@@ -2844,6 +2843,15 @@
             reveal.classList.remove("asset-placeholder");
             reveal.classList.add("asset-loading");
             reveal.querySelector(".reveal-tap").remove();
+            img.addEventListener("load", function () {
+              this.closest(".asset-card").classList.remove("asset-loading");
+              this.classList.add("asset-loaded");
+              this.style.display = "";
+            });
+            img.addEventListener("error", function () {
+              const fig = this.closest("figure");
+              if (fig) fig.remove();
+            });
             img.src = src;
           }
           return;
