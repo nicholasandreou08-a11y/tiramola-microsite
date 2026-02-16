@@ -465,6 +465,7 @@
       q9Opt1: "Ήρεμος προστάτης",
       q9Opt2: "Περίεργος εξερευνητής",
       q9Opt3: "Έξυπνος οργανωτής",
+      tapReveal: "Πάτα για αποκάλυψη",
     },
     en: {
       start: "Start",
@@ -767,6 +768,7 @@
       q9Opt1: "A calm protector",
       q9Opt2: "A curious explorer",
       q9Opt3: "A clever organiser",
+      tapReveal: "Tap to reveal",
     },
   };
 
@@ -1372,18 +1374,57 @@
     return designAssets.A;
   }
 
+  const revealEmojis = ["🎨", "🖼️", "👀", "✨", "🎁", "🪄"];
+  let revealEmojiIndex = 0;
+
   function assetFigure(label, src, extraClass) {
     if (!src) {
       return "";
     }
+    const emoji = revealEmojis[revealEmojiIndex % revealEmojis.length];
+    revealEmojiIndex++;
+    const t = currentLang();
     return `
-      <figure class="asset-card asset-loading ${extraClass || ""}">
-        <img src="${src}" alt="${label}" decoding="async"
-          onload="this.closest('.asset-card').classList.remove('asset-loading');this.classList.add('asset-loaded');"
+      <figure class="asset-card asset-placeholder ${extraClass || ""}" data-src="${src}">
+        <div class="reveal-tap">
+          <span class="reveal-icon">${emoji}</span>
+          <span class="reveal-label">${t.tapReveal}</span>
+        </div>
+        <img alt="${label}" decoding="async" style="display:none"
+          onload="this.closest('.asset-card').classList.remove('asset-loading');this.classList.add('asset-loaded');this.style.display='';"
           onerror="const fig=this.closest('figure'); if(fig) fig.remove();" />
         <figcaption>${label}</figcaption>
       </figure>
     `;
+  }
+
+  const confettiSets = [
+    ["🎉", "🥳", "⭐"], ["🎊", "✨", "💫"], ["🎈", "🪅", "🎀"],
+    ["🌟", "💥", "🔥"], ["🦋", "🌸", "🌺"], ["🍭", "🧁", "🎂"],
+  ];
+  let confettiSetIndex = 0;
+
+  function spawnConfettiBurst(card) {
+    const set = confettiSets[confettiSetIndex % confettiSets.length];
+    confettiSetIndex++;
+    const rect = card.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const count = 12 + Math.floor(Math.random() * 4);
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement("span");
+      el.className = "emoji-particle";
+      el.textContent = set[Math.floor(Math.random() * set.length)];
+      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
+      const dist = 60 + Math.random() * 80;
+      el.style.setProperty("--dx", `${Math.cos(angle) * dist}px`);
+      el.style.setProperty("--dy", `${Math.sin(angle) * dist}px`);
+      el.style.left = `${cx}px`;
+      el.style.top = `${cy}px`;
+      el.style.animationDelay = `${Math.random() * 80}ms`;
+      document.body.appendChild(el);
+      el.addEventListener("animationend", () => el.remove());
+    }
   }
 
   function routeNarrative(route) {
@@ -2726,6 +2767,7 @@
   }
 
   function render() {
+    revealEmojiIndex = 0;
     const app = document.getElementById("app");
     const path = routeFromHash();
     const t = currentLang();
@@ -2790,6 +2832,20 @@
         const nav = e.target.closest("[data-nav]");
         if (nav) {
           navigate(nav.getAttribute("data-nav"));
+          return;
+        }
+
+        const reveal = e.target.closest(".asset-placeholder");
+        if (reveal) {
+          const img = reveal.querySelector("img");
+          const src = reveal.getAttribute("data-src");
+          if (img && src) {
+            spawnConfettiBurst(reveal);
+            reveal.classList.remove("asset-placeholder");
+            reveal.classList.add("asset-loading");
+            reveal.querySelector(".reveal-tap").remove();
+            img.src = src;
+          }
           return;
         }
 
