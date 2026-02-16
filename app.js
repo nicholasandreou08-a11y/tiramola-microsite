@@ -1378,7 +1378,7 @@
     }
     return `
       <figure class="asset-card asset-loading ${extraClass || ""}">
-        <img src="${src}" alt="${label}" loading="lazy" decoding="async" fetchpriority="low"
+        <img src="${src}" alt="${label}" decoding="async"
           onload="this.closest('.asset-card').classList.remove('asset-loading');this.classList.add('asset-loaded');"
           onerror="const fig=this.closest('figure'); if(fig) fig.remove();" />
         <figcaption>${label}</figcaption>
@@ -2916,7 +2916,7 @@
               }
             });
           },
-          { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+          { threshold: 0.05, rootMargin: "0px 0px 200px 0px" }
         );
         revealCards.forEach((el) => observer.observe(el));
       }
