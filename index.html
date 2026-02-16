@@ -22,55 +22,7 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <!-- Password gate -->
-    <div id="password-gate" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#FFF7EC;font-family:Inter,sans-serif;">
-      <div style="text-align:center;padding:2rem;">
-        <h1 style="font-size:1.5rem;margin-bottom:1rem;color:#5C4033;">🔒 Αυτή η σελίδα είναι προστατευμένη</h1>
-        <p style="margin-bottom:1.5rem;color:#7a6555;">Εισάγετε τον κωδικό για να συνεχίσετε</p>
-        <input id="pw-input" type="password" placeholder="Κωδικός" style="padding:0.75rem 1rem;font-size:1rem;border:2px solid #d4c4b0;border-radius:8px;outline:none;width:220px;" />
-        <br/>
-        <button id="pw-btn" style="margin-top:1rem;padding:0.75rem 2rem;font-size:1rem;background:#5C4033;color:#fff;border:none;border-radius:8px;cursor:pointer;">Είσοδος</button>
-        <p id="pw-error" style="color:#c0392b;margin-top:1rem;display:none;">Λάθος κωδικός</p>
-      </div>
-    </div>
-
-    <!-- Actual app (hidden until unlocked) -->
-    <div id="app" class="app-shell" style="display:none;"></div>
-
-    <script>
-    (function() {
-      var PASSWORD = 'tiramola2026';
-
-      function unlock() {
-        document.getElementById('password-gate').style.display = 'none';
-        document.getElementById('app').style.display = '';
-        var s = document.createElement('script');
-        s.src = './app.js';
-        document.body.appendChild(s);
-      }
-
-      // Check URL hash for auto-unlock: #pw=tiramola2026
-      var hash = window.location.hash;
-      var match = hash.match(/[#&]pw=([^&]*)/);
-      if (match && decodeURIComponent(match[1]) === PASSWORD) {
-        unlock();
-        return;
-      }
-
-      // Manual entry
-      document.getElementById('pw-btn').addEventListener('click', check);
-      document.getElementById('pw-input').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') check();
-      });
-
-      function check() {
-        if (document.getElementById('pw-input').value === PASSWORD) {
-          unlock();
-        } else {
-          document.getElementById('pw-error').style.display = '';
-        }
-      }
-    })();
-    </script>
+    <div id="app" class="app-shell"></div>
+    <script src="./app.js"></script>
   </body>
 </html>
