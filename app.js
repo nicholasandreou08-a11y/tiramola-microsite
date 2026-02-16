@@ -1142,7 +1142,7 @@
 
   function navigate(path) {
     window.location.hash = path;
-    window.scrollTo(0, 0);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
   }
 
   function setThemeVars(theme) {
@@ -2580,7 +2580,6 @@
     return `
       <section class="page">
         <div class="pitch-hero">
-          <p class="pitch-eyebrow">${t.pitchHeroEyebrow}</p>
           <h1>${t.deckTitle}</h1>
           <p>${t.deckIntro}</p>
           <div class="pitch-meta">
@@ -2935,7 +2934,7 @@
 
   window.addEventListener("hashchange", () => {
     render();
-    window.scrollTo(0, 0);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
   });
   window.addEventListener("scroll", throttledScrollProgress, { passive: true });
   window.addEventListener("resize", throttledScrollProgress);
